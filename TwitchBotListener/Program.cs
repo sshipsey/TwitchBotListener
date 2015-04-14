@@ -14,6 +14,9 @@ using System.Configuration;
 
 namespace TwitchBotListener
 {
+    /// <summary>
+    /// An HTTP listener for GroupMe callbacks that responds to certain messages with silly things
+    /// </summary>
     class TwitchBotListener
     {
         public static void Main()
@@ -41,7 +44,11 @@ namespace TwitchBotListener
             Console.ReadKey();
         }
 
-
+        /// <summary>
+        /// Listen asynchronously on our listener and process messages as they come in
+        /// </summary>
+        /// <param name="listener"></param>
+        /// <returns></returns>
         public static async Task Listen_async(HttpListener listener)
         {
             while (true)
@@ -52,6 +59,10 @@ namespace TwitchBotListener
             }
         }
 
+        /// <summary>
+        /// Process any received message and determine an action based on its content
+        /// </summary>
+        /// <param name="message"></param>
         public static async void Process_async(HttpListenerContext message)
         {
             string botId = ConfigurationSettings.AppSettings["BOT_ID"];
@@ -62,10 +73,10 @@ namespace TwitchBotListener
             string text = responseObject.text;
             string sndMsg = "";
             bool hasAttachment = false;
-            var attachments = new attachment{};
+            var attachments = new Attachment{};
             int flag = 1;
-            //Read message and check if it contains "Kappa"
-            //If so, send kappa
+
+            //Begin checking for message content, set flag based on whether or not we received an important message
             if (text.Contains("Kappa"))
             {
                 hasAttachment = true;
@@ -78,7 +89,7 @@ namespace TwitchBotListener
             else if (text.Contains("Kreygasm"))
             {
                 hasAttachment = true;
-                attachments = new attachment
+                attachments = new Attachment
                 {
                     type = "image",
                     url = "http://i.groupme.com/19x27.png.e885b116ad954e698e682975b00874cd"
@@ -142,17 +153,32 @@ namespace TwitchBotListener
             }
         }
 
+        /// <summary>
+        /// Function for case insensitive Ctrl+F
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="compare"></param>
+        /// <returns></returns>
         public static bool Contains(string source, string compare)
         {
             return Regex.IsMatch(source, compare, RegexOptions.IgnoreCase);
         }
 
+        /// <summary>
+        /// Create response message for "rekt"
+        /// </summary>
+        /// <returns></returns>
         public static string getRekt()
         {
             string[] rekt = { "☑ REKTangle", "☑ SHREKT", "☑ The Good, the Bad, and the REKT", "☑ LawREKT of Arabia", "☑ Tyrannosaurus REKT", "☑ REKT-it Ralph", "☑ The Lord of the REKT", "The Usual SusREKTs ☑", "☑ REKT to the Future", "☑ eREKTile dysfunction"};
             Random r = new Random();
             return rekt[(int)r.Next(0, 9)];
         }
+
+        /// <summary>
+        /// Create response message for "told"
+        /// </summary>
+        /// <returns></returns>
         public static string getTold()
         {
             string[] told = {
@@ -269,6 +295,9 @@ namespace TwitchBotListener
         }
     }
 
+    /// <summary>
+    /// Sent Message structures
+    /// </summary>
     [DataContract]
     public class BotPictureMsg
     {
@@ -276,7 +305,7 @@ namespace TwitchBotListener
         public string botId { get; set; }
  
         [DataMember(Name="attachments")]
-        public attachment[] attachments { get; set; }
+        public Attachment[] attachments { get; set; }
     }
 
     [DataContract]
@@ -289,7 +318,7 @@ namespace TwitchBotListener
         public string text { get; set; }
     }
 
-    public class attachment
+    public class Attachment
     {
         public string type { get; set; }
         public string url { get; set; }
