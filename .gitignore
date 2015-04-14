@@ -46,6 +46,9 @@ build/
 *.log
 *.scc
  
+# App.Config
+*.config
+
 # OS generated files #
 .DS_Store*
 ehthumbs.db
