@@ -111,6 +111,10 @@ namespace TwitchBotListener
             {
                 sndMsg = getTold();
             }
+            else if (Contains(text, "!roll")) 
+            {
+                sndMsg = rollDice(responseObject.name);
+            }
             else {
                 flag = 0;
             }
@@ -291,6 +295,11 @@ namespace TwitchBotListener
         };
             Random r = new Random();
             return told[(int)r.Next(0, 106)];
+        }
+        public string rollDice(string name)
+        {
+            Random r = new Random();
+            return String.Format("{0} rolls a {1}!", name, r.Next(1, 100).ToString());
         }
     }
 
