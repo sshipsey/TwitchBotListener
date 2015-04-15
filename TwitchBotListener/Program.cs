@@ -11,6 +11,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using System.Configuration;
+using System.Linq;
 
 namespace TwitchBotListener
 {
@@ -19,6 +20,8 @@ namespace TwitchBotListener
     /// </summary>
     class TwitchBotListener
     {
+        public static List<Sniperino> sniperinos = new List<Sniperino>();
+
         public static void Main()
         {
             HttpListener listener = new HttpListener();
@@ -71,6 +74,7 @@ namespace TwitchBotListener
             var json = new StreamReader(message.Request.InputStream).ReadToEnd();
             dynamic responseObject = JsonConvert.DeserializeObject(json);
             string text = responseObject.text;
+            string name = responseObject.name;
             string sndMsg = "";
             bool hasAttachment = false;
             var attachments = new Attachment{};
@@ -113,9 +117,22 @@ namespace TwitchBotListener
             }
             else if (Contains(text, "!roll")) 
             {
-                sndMsg = rollDice(responseObject.name);
+                sndMsg = rollDice(name);
             }
-            else {
+            else if (Contains(text, "molly"))
+            {
+                sndMsg = "༼ つ ◕_◕ ༽つ GIVE MOLLY ༼ つ ◕_◕ ༽つ";
+            }
+            else if (Contains(text, "sniperino"))
+            {
+                sndMsg = playSniperino(name);
+            }
+            else if (Contains(text, "ameno"))
+            {
+                sndMsg = "༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ";
+            }
+            else
+            {
                 flag = 0;
             }
             //Check if a valid response was recieved and if it wasn't from the bot
@@ -296,10 +313,55 @@ namespace TwitchBotListener
             Random r = new Random();
             return told[(int)r.Next(0, 106)];
         }
-        public string rollDice(string name)
+
+        public static string rollDice(string name)
         {
-            Random r = new Random();
-            return String.Format("{0} rolls a {1}!", name, r.Next(1, 100).ToString());
+            var player = (sniperinos.SingleOrDefault(sniperino => name == sniperino.name));
+            
+            //This guy is playing sniperino!
+            if (player != null)
+            {
+                Random r = new Random();
+                int roll = r.Next(1, 100);
+                int challenge = player.challenge;
+                sniperinos.Remove(player);
+
+                if (roll > challenge)
+                {
+                    return String.Format("{0} rolls a {1}, beating out the challenge of {2}. The donger thanks him ʕ༼◕  ౪  ◕✿༽ʔ", name, roll, challenge);
+                }
+                else if (roll == challenge)
+                {
+                    return String.Format("{0} rolls a {1}, tieing the challenge of {2}. The donger...is forced to watch Forsen's stream ლ(ಥ Д ಥ )ლ", name, roll, challenge);
+                }
+                else
+                {
+                    return String.Format("{0} rolls a {1}, losing the challenge of {2}! RIP in pepperonis, donger. (⊃✖  〰 ✖)⊃", name, roll, challenge);
+                }
+            }
+            //This guy is just rolling for the lols
+            else
+            {
+                Random r = new Random();
+                return String.Format("{0} rolls a {1}!", name, r.Next(1, 100).ToString());
+            }
+        }
+
+        public static string playSniperino(string name)
+        {
+            var player = (sniperinos.SingleOrDefault(sniperino => name == sniperino.name));
+
+            if (player == null)
+            {
+                Random r = new Random();
+                int challenge = r.Next(1, 100);
+                sniperinos.Add(new Sniperino(name, challenge));
+                return String.Format("ヽ༼ຈل͜ຈ༽_•︻ ┻̿═━一 o͡͡͡╮༼ • ʖ̯ • ༽╭o͡͡͡ {0}, roll higher than a {1} or the donger gets it!", name, challenge);
+            }
+            else
+            {
+                return "ヽ༼ຈل͜ຈ༽_•︻ ┻̿═━一 You're already playing sniperinos! I oughtta sniperino YOU!";
+            }
         }
     }
 
@@ -330,5 +392,17 @@ namespace TwitchBotListener
     {
         public string type { get; set; }
         public string url { get; set; }
+    }
+
+    public class Sniperino
+    {
+        public string name {get; set;}
+        public int challenge {get; set;}
+
+        public Sniperino(string n, int c)
+        {
+            name = n;
+            challenge = c;
+        }
     }
 }
