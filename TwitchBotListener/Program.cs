@@ -123,7 +123,7 @@ namespace TwitchBotListener
             {
                 sndMsg = "༼ つ ◕_◕ ༽つ GIVE MOLLY ༼ つ ◕_◕ ༽つ";
             }
-            else if (Contains(text, "sniperino"))
+            else if (Contains(text, "!sniperino"))
             {
                 sndMsg = playSniperino(name);
             }
