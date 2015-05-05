@@ -58,7 +58,7 @@ namespace TwitchBotListener
             {
                 Console.WriteLine("Listening for new message...");
 
-                Process_async(await listener.GetContextAsync());
+                ProcessAsync(await listener.GetContextAsync());
             }
         }
 
@@ -66,15 +66,24 @@ namespace TwitchBotListener
         /// Process any received message and determine an action based on its content
         /// </summary>
         /// <param name="message"></param>
-        public static async void Process_async(HttpListenerContext message)
+        public static async void ProcessAsync(HttpListenerContext message)
         {
             string botId = ConfigurationSettings.AppSettings["BOT_ID"];
 
             HttpListenerResponse response = message.Response;
             var json = new StreamReader(message.Request.InputStream).ReadToEnd();
             dynamic responseObject = JsonConvert.DeserializeObject(json);
-            string text = responseObject.text;
-            string name = responseObject.name;
+            string text;
+            string name;
+            try
+            {
+                text = responseObject.text;
+                name = responseObject.name;
+            }
+            catch (Exception e)
+            {
+                return;
+            }
             string sndMsg = "";
             bool hasAttachment = false;
             var attachments = new Attachment{};
@@ -142,13 +151,10 @@ namespace TwitchBotListener
 
                 if (hasAttachment)
                 {
-                    var a = new Attachment[1];
-                    a[0] = attachments;
-
                     post = new BotPictureMsg
                     {
                         botId = botId,
-                        attachments = a
+                        attachments = new Attachment[]{ attachments }
                     };
                 }
                 else
@@ -190,7 +196,7 @@ namespace TwitchBotListener
         /// <returns></returns>
         public static string getRekt()
         {
-            string[] rekt = { "☐ Not rekt\n☑ REKTangle", "☐ Not rekt\n☑ SHREKT", "☐ Not rekt\n☑ The Good, the Bad, and the REKT", "☐ Not rekt\n☑ LawREKT of Arabia", "☐ Not rekt\n☑ Tyrannosaurus REKT", "☐ Not rekt\n☑ REKT-it Ralph", "☐ Not rekt\n☑ The Lord of the REKT", "☐ Not rekt\nThe Usual SusREKTs ☑", "☐ Not rekt\n☑ REKT to the Future", "☐ Not rekt\n☑ eREKTile dysfunction" };
+            string[] rekt = { "☐ Not rekt\n☑ REKTangle", "☐ Not rekt\n☑ SHREKT", "☐ Not rekt\n☑ The Good, the Bad, and the REKT", "☐ Not rekt\n☑ LawREKT of Arabia", "☐ Not rekt\n☑ Tyrannosaurus REKT", "☐ Not rekt\n☑ REKT-it Ralph", "☐ Not rekt\n☑ The Lord of the REKT", "☐ Not rekt\n☑ The Usual SusREKTs", "☐ Not rekt\n☑ REKT to the Future", "☐ Not rekt\n☑ eREKTile dysfunction" };
             Random r = new Random();
             return rekt[(int)r.Next(0, 9)];
         }
