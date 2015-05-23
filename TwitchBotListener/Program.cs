@@ -3,9 +3,7 @@ using System.Runtime.Serialization;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using System.Threading;
 using System.Net;
-using System.Web;
 using System.Net.Http;
 using System.IO;
 using Newtonsoft.Json;
@@ -13,14 +11,18 @@ using System.Text.RegularExpressions;
 using System.Configuration;
 using System.Linq;
 
+
 namespace TwitchBotListener
 {
+    
     /// <summary>
     /// An HTTP listener for GroupMe callbacks that responds to certain messages with silly things
     /// </summary>
     class TwitchBotListener
     {
         public static List<Sniperino> sniperinos = new List<Sniperino>();
+        public static readonly string toldLoc = "C:\\Development\\TwitchBotListener\\TwitchBotListener\\told.json";
+        public static readonly string rektLoc = "C:\\Development\\TwitchBotListener\\TwitchBotListener\\rekt.json";
 
         public static void Main()
         {
@@ -110,11 +112,23 @@ namespace TwitchBotListener
             }
             else if (Contains(text, "is guiseppe a noob?"))
             {
-                sndMsg = "yes";
+                sndMsg = "Yes. Except during games of HOTS. Then the rest of us are noobs and he is god.";
             }
             else if (Contains(text, "is perry a noob?"))
             {
-                sndMsg = "yes. muffin is noob. it is known.";
+                sndMsg = "Yes. Muffin is noob. It is known.";
+            }
+            else if (Contains(text, "is jason a noob?"))
+            {
+                sndMsg = "Does Tom Brady sit when he pees? Same answer.";
+            }
+            else if (Contains(text, "is blum a noob?"))
+            {
+                sndMsg = "Who is blum? Does not compute. User must play games more than once a year to have noobness evaluated.";
+            }
+            else if (Contains(text, "triforce"))
+            {
+                sndMsg = " ▲\n▲ ▲";
             }
             else if (Contains(text, "rekt"))
             {
@@ -196,9 +210,13 @@ namespace TwitchBotListener
         /// <returns></returns>
         public static string getRekt()
         {
-            string[] rekt = { "☐ Not rekt\n☑ REKTangle", "☐ Not rekt\n☑ SHREKT", "☐ Not rekt\n☑ The Good, the Bad, and the REKT", "☐ Not rekt\n☑ LawREKT of Arabia", "☐ Not rekt\n☑ Tyrannosaurus REKT", "☐ Not rekt\n☑ REKT-it Ralph", "☐ Not rekt\n☑ The Lord of the REKT", "☐ Not rekt\n☑ The Usual SusREKTs", "☐ Not rekt\n☑ REKT to the Future", "☐ Not rekt\n☑ eREKTile dysfunction" };
-            Random r = new Random();
-            return rekt[(int)r.Next(0, 9)];
+            using (StreamReader r = new StreamReader(rektLoc))
+            {
+                string json = r.ReadToEnd();
+                string[] rekt = JsonConvert.DeserializeObject<string[]>(json);
+                Random rand = new Random();
+                return rekt[(int)rand.Next(0, 84)];
+            }
         }
 
         /// <summary>
@@ -207,117 +225,13 @@ namespace TwitchBotListener
         /// <returns></returns>
         public static string getTold()
         {
-            string[] told = {
-                                "☐ Not Told\n☑ TOLDASAURUS REX",
-"☐ Not Told\n☑ Cash4Told.com",
-"☐ Not Told\n☑ No Country for Told Men",
-"☐ Not Told\n☑ Knights of the Told Republic",
-"☐ Not Told\n☑ ToldSpice",
-"☐ Not Told\n☑ The Elder Tolds IV: Oblivious",
-"☐ Not Told\n☑ Command & Conquer: Toldberian Sun",
-"☐ Not Told\n☑ GuiTold Hero: World Told",
-"☐ Not Told\n☑ Told King of Boletaria",
-"☐ Not Told\n☑ Countold Strike",
-"☐ Not Told\n☑ Unreal Toldament",
-"☐ Not Told\n☑ Stone-told Steve Austin",
-"☐ Not Told\n☑ Half Life 2: Episode Told",
-"☐ Not Told\n☑ Roller Coaster Toldcoon",
-"☐ Not Told\n☑ Assassin’s Creed: Tolderhood",
-"☐ Not Told\n☑ Battletolds",
-"☐ Not Told\n☑ S.T.A.L.K.E.R.: Shatold of Chernobyl",
-"☐ Not Told\n☑ Toldasauraus Rex 2: Electric Toldaloo",
-"☐ Not Told\n☑ Told of Duty 4: Modern Toldfare",
-"☐ Not Told\n☑ Pokemon Told and Silver",
-"☐ Not Told\n☑ The Legend of Eldorado : The Lost City of Told",
-"☐ Not Told\n☑ Rampage: Toldal Destruction",
-"☐ Not Told\n☑ Told Fortress Classic",
-"☐ Not Told\n☑ Toldman: Arkham Told",
-"☐ Not Told\n☑ The Good, The Bad, and The Told",
-"☐ Not Told\n☑ Super Mario SunTold",
-"☐ Not Told\n☑ Legend of Zelda: Toldacarnia of Time",
-"☐ Not Told\n☑ Toldstone Creamery",
-"☐ Not Told\n☑ Mario Golf: Toldstool Tour",
-"☐ Not Told\n☑ Super Told Boy",
-"☐ Not Told\n☑ Sir Barristan the Told",
-"☐ Not Told\n☑ Left 4 Told",
-"☐ Not Told\n☑ Battoldfield: Bad Company 2",
-"☐ Not Told\n☑ Toldman Sachs",
-"☐ Not Told\n☑ Conker’s Bad Fur Day: Live and Retolded",
-"☐ Not Told\n☑ Lead and Told: Gangs of the Wild West",
-"☐ Not Told\n☑ Portold 2",
-"☐ Not Told\n☑ Avatold: The Last Airbender",
-"☐ Not Told\n☑ Dragon Ball Z Toldkaichi Budokai",
-"☐ Not Told\n☑ Toldcraft II: Tolds of Toldberty",
-"☐ Not Told\n☑ Leo Toldstoy",
-"☐ Not Told\n☑ Metal Gear Toldid 3: Snake Eater",
-"☐ Not Told\n☑ 3D Dot Told Heroes",
-"☐ Not Told\n☑ J.R.R Toldkien’s Lord of the Told",
-"☐ Not Told\n☑ Told you that PS3 has no games",
-"☐ Not Told\n☑ LitTOLD Big Planet",
-"☐ Not Told\n☑ Rome: Toldal War",
-"☐ Not Told\n☑ Gran Toldrismo 5",
-"☐ Not Told\n☑ Told Calibur 4",
-"☐ Not Told\n☑ Told Fortress 2",
-"☐ Not Told\n☑ Castlevania: RonTold of Blood",
-"☐ Not Told\n☑ Guilty Gear XX Accent Told",
-"☐ Not Told\n☑ Cyndaquil, Chicorita, and Toldodile",
-"☐ Not Told\n☑ Was foretold",
-"☐ Not Told\n☑ Demon’s Told",
-"☐ Not Told\n☑ http://www.youtold.com",
-"☐ Not Told\n☑ Tolden Sun: Dark Dawn",
-"☐ Not Told\n☑ Tic-Tac-Told",
-"☐ Not Told\n☑ Biotold 2",
-"☐ Not Told\n☑ Toldbound",
-"☐ Not Told\n☑ Icetold",
-"☐ Not Told\n☑ Told of the Rings",
-"☐ Not Told\n☑ Hisoutentoldu",
-"☐ Not Told\n☑ Told dish of revenge served",
-"☐ Not Told\n☑ Apply told water to burnt area",
-"☐ Not Told\n☑ The Tolden Rule",
-"☐ Not Told\n☑ Dark Tolds",
-"☐ Not Told\n☑ Told Story",
-"☐ Not Told\n☑ Tolden Axe",
-"☐ Not Told\n☑ Gary Toldman",
-"☐ Not Told\n☑ Told MacDonald Had a Farm",
-"☐ Not Told\n☑ Super Told XLVIII",
-"☐ Not Told\n☑ Told Finger",
-"☐ Not Told\n☑ Toldeneye",
-"☐ Not Told\n☑ Told and Tolder",
-"☐ Not Told\n☑ Told and Tolder Told",
-"☐ Not Told\n☑ Lord Toldermort",
-"☐ Not Told\n☑ Told Bond: Medicated Powder",
-"☐ Not Told\n☑ The Tolder Scrolls",
-"☐ Not Told\n☑ House Toldgaryan",
-"☐ Not Told\n☑ Toldèmon O/P",
-"☐ Not Told\n☑ Told Testament",
-"☐ Not Told\n☑ World of Toldcraft: The Burning Told",
-"☐ Not Told\n☑ All Told Everything",
-"☐ Not Told\n☑ JRR Toldkien",
-"☐ Not Told\n☑ Reddit Told",
-"☐ Not Told\n☑ Told's spaghetti",
-"☐ Not Told\n☑ The Toldman Show",
-"☐ Not Told\n☑ Mementold",
-"☐ Not Told\n☑ Toldega Nights: The Ballad of Ricky Toldy Battold Royale",
-"☐ Not Told\n☑ I'll have the toldalini Alfredo, please",
-"☐ Not Told\n☑ The Big Letoldski",
-"☐ Not Told\n☑ Tolddock Saints",
-"☐ Not Told\n☑ Legend of Total Toldage",
-"☐ Not Told\n☑ carved into a toldem pole",
-"☐ Not Told\n☑ DIS NIGGA GOT TOLD",
-"☐ Not Told\n☑ Told-finger death punch",
-"☐ Not Told\n☑ Told alexandra",
-"☐ Not Told\n☑ Bring me the told",
-"☐ Not Told\n☑ toldboy and the tolden army",
-"☐ Not Told\n☑ Followed the tolden brick road",
-"☐ Not Told\n☑ Fear and Loathing in Told Vegas",
-"☐ Not Told\n☑ Told Mountain",
-"☐ Not Told\n☑ Snoop told",
-"☐ Not Told\n☑ Toldclub",
-"☐ Not Told\n☑ The Told and the Textless",
-"☐ Not Told\n☑ Tolden Caulfield"
-        };
-            Random r = new Random();
-            return told[(int)r.Next(0, 106)];
+            using (StreamReader r = new StreamReader(toldLoc)) 
+            {
+                string json = r.ReadToEnd();
+                string[] told = JsonConvert.DeserializeObject<string[]>(json);
+                Random rand = new Random();
+                return told[(int)rand.Next(0, 181)];
+            }
         }
 
         public static string rollDice(string name)
