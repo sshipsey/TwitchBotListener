@@ -18,7 +18,10 @@ namespace TwitchBotListener
     /// </summary>
     class TwitchBotListener
     {
-        public static List<Sniperino> sniperinos = new List<Sniperino>();
+        //TODO:
+        //Implement a dictionary of sniperinos, organized by name, that can be serialized and deserialized
+        //from json easily for storage and such. sniperino class has scores for now.
+        public static Dictionary<string, Sniperino> sniperinos;
 
         public static readonly string toldLoc = "Json\\told.json";
         public static readonly string rektLoc = "Json\\rekt.json";

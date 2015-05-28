@@ -74,6 +74,9 @@
     <None Include="Json\rekt.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Json\Sniperinos.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Json\told.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

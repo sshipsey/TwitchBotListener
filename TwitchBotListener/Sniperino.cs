@@ -10,6 +10,8 @@ namespace TwitchBotListener
     {
         public string name { get; set; }
         public int challenge { get; set; }
+        public int wins { get; set; }
+        public int losses { get; set; }
 
         public Sniperino(string n, int c)
         {
