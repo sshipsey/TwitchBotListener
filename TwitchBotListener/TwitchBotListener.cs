@@ -21,7 +21,7 @@ namespace TwitchBotListener
         //TODO:
         //Implement a dictionary of sniperinos, organized by name, that can be serialized and deserialized
         //from json easily for storage and such. sniperino class has scores for now.
-        public static Dictionary<string, Sniperino> sniperinos;
+        public static List<Sniperino> sniperinos = new List<Sniperino>();
 
         public static readonly string toldLoc = "Json\\told.json";
         public static readonly string rektLoc = "Json\\rekt.json";
@@ -29,7 +29,7 @@ namespace TwitchBotListener
         public static void Main()
         {
             HttpListener listener = new HttpListener();
-            int port = 8090;
+            int port = Convert.ToInt32(ConfigurationSettings.AppSettings["PORT"]);
 
             listener.Prefixes.Add(string.Format("http://*:{0}/", port));
 
@@ -91,10 +91,12 @@ namespace TwitchBotListener
             }
             string text;
             string name;
+            string group_id;
             try
             {
                 text = responseObject.text;
                 name = responseObject.name;
+                group_id = responseObject.group_id;
             }
             catch (Exception e)
             {
@@ -105,78 +107,86 @@ namespace TwitchBotListener
             int flag = 1;
             bool hasAttachments = false;
 
-            //Begin checking for message content, set flag based on whether or not we received an important message
-            if (text.Contains("Kappa"))
+            //check for message with valid group_id
+            if (group_id == groupId)
             {
-                attachments = new Attachment
+                //Begin checking for message content, set flag based on whether or not we received an important message
+                if (text.Contains("Kappa"))
                 {
-                    type = "image",
-                    url = "http://i.groupme.com/25x28.png.ed8bf2c9b9084d9d8e00474bbd1e8a5f"
-                };
-                hasAttachments = true;
-            }
-            else if (text.Contains("Kreygasm"))
-            {
-                attachments = new Attachment
+                    attachments = new Attachment
+                    {
+                        type = "image",
+                        url = "http://i.groupme.com/25x28.png.ed8bf2c9b9084d9d8e00474bbd1e8a5f"
+                    };
+                    hasAttachments = true;
+                }
+                else if (text.Contains("Kreygasm"))
                 {
-                    type = "image",
-                    url = "http://i.groupme.com/19x27.png.e885b116ad954e698e682975b00874cd"
-                };
-                hasAttachments = true;
-            }
-            //TODO:
-            //PJSalt
-            else if (Contains(text, "is guiseppe a noob?"))
-            {
-                sndMsg = "Yes. Except during games of HOTS. Then the rest of us are noobs and he is god.";
-            }
-            else if (Contains(text, "is perry a noob?"))
-            {
-                sndMsg = "Yes. Muffin is noob. It is known.";
-            }
-            else if (Contains(text, "is jason a noob?"))
-            {
-                sndMsg = "Does Tom Brady sit when he pees? Same answer.";
-            }
-            else if (Contains(text, "skeltal"))
-            {
-                sndMsg = "i'm triggered";
-            }
-            else if (Contains(text, "spooky"))
-            {
-                sndMsg = tooSpooky();
-            }
-            else if (Contains(text, "is blum a noob?"))
-            {
-                sndMsg = "Who is blum? Does not compute. User must play games more than once a year to have noobness evaluated.";
-            }
-            else if (Contains(text, "triforce"))
-            {
-                sndMsg = " ▲\n▲ ▲";
-            }
-            else if (Contains(text, "rekt"))
-            {
-                sndMsg = getRekt();
-            }
-            else if (Contains(text, "told"))
-            {
-                sndMsg = getTold();
-            }
-            else if (Contains(text, "!roll")) 
-            {
-                sndMsg = rollDice(name);
-            }
-            else if (Contains(text, "molly"))
-            {
-                sndMsg = "༼ つ ◕_◕ ༽つ GIVE MOLLY ༼ つ ◕_◕ ༽つ";
-            }
-            else if (Contains(text, "!sniperino"))
-            {
-                sndMsg = playSniperino(name);
-            }
-            else if (Contains(text, "ameno"))
-            {
-                sndMsg = "༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ";
+                    attachments = new Attachment
+                    {
+                        type = "image",
+                        url = "http://i.groupme.com/19x27.png.e885b116ad954e698e682975b00874cd"
+                    };
+                    hasAttachments = true;
+                }
+                //TODO:
+                //PJSalt
+                else if (Contains(text, "is guiseppe a noob?"))
+                {
+                    sndMsg = "Yes. Except during games of HOTS. Then the rest of us are noobs and he is god.";
+                }
+                else if (Contains(text, "is perry a noob?"))
+                {
+                    sndMsg = "Yes. Muffin is noob. It is known.";
+                }
+                else if (Contains(text, "is jason a noob?"))
+                {
+                    sndMsg = "Does Tom Brady sit when he pees? Same answer.";
+                }
+                else if (Contains(text, "skeltal"))
+                {
+                    sndMsg = "i'm triggered";
+                }
+                else if (Contains(text, "spooky"))
+                {
+                    sndMsg = tooSpooky();
+                }
+                else if (Contains(text, "is blum a noob?"))
+                {
+                    sndMsg = "Who is blum? Does not compute. User must play games more than once a year to have noobness evaluated.";
+                }
+                else if (Contains(text, "triforce"))
+                {
+                    sndMsg = " ▲\n▲ ▲";
+                }
+                else if (Contains(text, "rekt"))
+                {
+                    sndMsg = getRekt();
+                }
+                else if (Contains(text, "told"))
+                {
+                    sndMsg = getTold();
+                }
+                else if (Contains(text, "!roll"))
+                {
+                    sndMsg = rollDice(name);
+                }
+                else if (Contains(text, "molly"))
+                {
+                    sndMsg = "༼ つ ◕_◕ ༽つ GIVE MOLLY ༼ つ ◕_◕ ༽つ";
+                }
+                else if (Contains(text, "!sniperino"))
+                {
+                    sndMsg = playSniperino(name);
+                }
+                else if (Contains(text, "ameno"))
+                {
+                    sndMsg = "༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ༼ つ ◕_◕ ༽つ AMENO ༼ つ ◕_◕ ༽つ";
+                }
+                else
+                {
+                    flag = 0;
+                }
             }
             else
             {

@@ -7,7 +7,7 @@ namespace TwitchBotListener
     /// Sent Message structures
     /// </summary>
     [DataContract]
-    public abstract class BotMsg
+    public class BotMsg
     {
         [DataMember(Name = "bot_id")]
         public string botId = ConfigurationSettings.AppSettings["BOT_ID"];
