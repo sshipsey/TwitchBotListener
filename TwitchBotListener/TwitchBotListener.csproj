@@ -61,11 +61,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Attachment.cs" />
+    <Compile Include="BotMsg.cs" />
+    <Compile Include="BotPictureMsg.cs" />
+    <Compile Include="BotTextMsg.cs" />
+    <Compile Include="Sniperino.cs" />
+    <Compile Include="TwitchBotListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Json\rekt.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Json\told.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="rekt.json" />
     <None Include="told.json" />

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,18 +10,18 @@ using System.Text.RegularExpressions;
 using System.Configuration;
 using System.Linq;
 
-
 namespace TwitchBotListener
 {
-    
+
     /// <summary>
     /// An HTTP listener for GroupMe callbacks that responds to certain messages with silly things
     /// </summary>
     class TwitchBotListener
     {
         public static List<Sniperino> sniperinos = new List<Sniperino>();
-        public static readonly string toldLoc = "C:\\Development\\TwitchBotListener\\TwitchBotListener\\told.json";
-        public static readonly string rektLoc = "C:\\Development\\TwitchBotListener\\TwitchBotListener\\rekt.json";
+
+        public static readonly string toldLoc = "Json\\told.json";
+        public static readonly string rektLoc = "Json\\rekt.json";
 
         public static void Main()
         {
@@ -70,11 +69,23 @@ namespace TwitchBotListener
         /// <param name="message"></param>
         public static async void ProcessAsync(HttpListenerContext message)
         {
-            string botId = ConfigurationSettings.AppSettings["BOT_ID"];
+            string groupId = ConfigurationSettings.AppSettings["GROUP_ID"];
+            string botSenderId = ConfigurationSettings.AppSettings["BOT_SENDER_ID"];
 
             HttpListenerResponse response = message.Response;
             var json = new StreamReader(message.Request.InputStream).ReadToEnd();
-            dynamic responseObject = JsonConvert.DeserializeObject(json);
+            dynamic responseObject;
+
+            //Sanitize input. If non-json is sent, return
+            try
+            {
+                responseObject = JsonConvert.DeserializeObject(json);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("dynamic responseObject = JsonConvert.DeserializeObject(json); threw" + ex.ToString());
+                return;
+            }
             string text;
             string name;
             try
@@ -87,29 +98,31 @@ namespace TwitchBotListener
                 return;
             }
             string sndMsg = "";
-            bool hasAttachment = false;
             var attachments = new Attachment{};
             int flag = 1;
+            bool hasAttachments = false;
 
             //Begin checking for message content, set flag based on whether or not we received an important message
             if (text.Contains("Kappa"))
             {
-                hasAttachment = true;
                 attachments = new Attachment
                 {
                     type = "image",
                     url = "http://i.groupme.com/25x28.png.ed8bf2c9b9084d9d8e00474bbd1e8a5f"
                 };
+                hasAttachments = true;
             }
             else if (text.Contains("Kreygasm"))
             {
-                hasAttachment = true;
                 attachments = new Attachment
                 {
                     type = "image",
                     url = "http://i.groupme.com/19x27.png.e885b116ad954e698e682975b00874cd"
                 };
+                hasAttachments = true;
             }
+            //TODO:
+            //PJSalt
             else if (Contains(text, "is guiseppe a noob?"))
             {
                 sndMsg = "Yes. Except during games of HOTS. Then the rest of us are noobs and he is god.";
@@ -121,6 +134,14 @@ namespace TwitchBotListener
             else if (Contains(text, "is jason a noob?"))
             {
                 sndMsg = "Does Tom Brady sit when he pees? Same answer.";
+            }
+            else if (Contains(text, "skeltal"))
+            {
+                sndMsg = "i'm triggered";
+            }
+            else if (Contains(text, "spooky"))
+            {
+                sndMsg = tooSpooky();
             }
             else if (Contains(text, "is blum a noob?"))
             {
@@ -158,28 +179,19 @@ namespace TwitchBotListener
             {
                 flag = 0;
             }
-            //Check if a valid response was recieved and if it wasn't from the bot
-            if (flag == 1 && responseObject.sender_id != "204062")
-            {
-                dynamic post;
 
-                if (hasAttachment)
+            //Check if a valid response was recieved and if it wasn't from the bot
+            if (flag == 1 && responseObject.sender_id != botSenderId && responseObject.group_id == groupId)
+            {
+                BotMsg post;
+                if (hasAttachments)
                 {
-                    post = new BotPictureMsg
-                    {
-                        botId = botId,
-                        attachments = new Attachment[]{ attachments }
-                    };
+                    post = new BotPictureMsg(attachments);
                 }
                 else
                 {
-                    post = new BotTextMsg
-                    {
-                        botId = botId,
-                        text = sndMsg
-                    };
+                    post = new BotTextMsg(sndMsg);
                 }
-
                 var serialPost = JsonConvert.SerializeObject(post);
 
                 using (var content = new ByteArrayContent(Encoding.UTF8.GetBytes(serialPost)))
@@ -234,6 +246,13 @@ namespace TwitchBotListener
             }
         }
 
+        public static string tooSpooky()
+        {
+            Random r = new Random();
+            int spookNum = r.Next(2, 98);
+            return string.Format("{0}spooky{1}me", spookNum, spookNum + 2);
+        }
+
         public static string rollDice(string name)
         {
             var player = (sniperinos.SingleOrDefault(sniperino => name == sniperino.name));
@@ -282,47 +301,6 @@ namespace TwitchBotListener
             {
                 return "ヽ༼ຈل͜ຈ༽_•︻ ┻̿═━一 You're already playing sniperinos! I oughtta sniperino YOU!";
             }
-        }
-    }
-
-    /// <summary>
-    /// Sent Message structures
-    /// </summary>
-    [DataContract]
-    public class BotPictureMsg
-    {
-        [DataMember(Name = "bot_id")]
-        public string botId { get; set; }
- 
-        [DataMember(Name="attachments")]
-        public Attachment[] attachments { get; set; }
-    }
-
-    [DataContract]
-    public class BotTextMsg
-    {
-        [DataMember(Name = "bot_id")]
-        public string botId { get; set; }
-
-        [DataMember(Name = "text")]
-        public string text { get; set; }
-    }
-
-    public class Attachment
-    {
-        public string type { get; set; }
-        public string url { get; set; }
-    }
-
-    public class Sniperino
-    {
-        public string name {get; set;}
-        public int challenge {get; set;}
-
-        public Sniperino(string n, int c)
-        {
-            name = n;
-            challenge = c;
         }
     }
 }

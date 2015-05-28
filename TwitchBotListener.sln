@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.22823.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchBotListener", "TwitchBotListener\TwitchBotListener.csproj", "{6446B610-CFCC-41D2-87EB-D077F3C1AFA8}"
 EndProject
 Global
