@@ -71,6 +71,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Json\dongers.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Json\rekt.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

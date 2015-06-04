@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using System.Configuration;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace TwitchBotListener
 {
@@ -21,10 +22,12 @@ namespace TwitchBotListener
         //TODO:
         //Implement a dictionary of sniperinos, organized by name, that can be serialized and deserialized
         //from json easily for storage and such. sniperino class has scores for now.
-        public static List<Sniperino> sniperinos = new List<Sniperino>();
+        public static List<Sniperino> sniperinos;
 
-        public static readonly string toldLoc = "Json\\told.json";
-        public static readonly string rektLoc = "Json\\rekt.json";
+        public static readonly string toldLoc = @"Json\told.json";
+        public static readonly string rektLoc = @"Json\rekt.json";
+        public static readonly string sniperinosLoc = @"Json\Sniperinos.json";
+        public static readonly string dongersLoc = @"Json\dongers.json";
 
         public static void Main()
         {
@@ -167,6 +170,10 @@ namespace TwitchBotListener
                 {
                     sndMsg = getTold();
                 }
+                else if (Contains(text, "donger"))
+                {
+                    sndMsg = getDongered();
+                }
                 else if (Contains(text, "!roll"))
                 {
                     sndMsg = rollDice(name);
@@ -244,6 +251,20 @@ namespace TwitchBotListener
             }
         }
 
+        /// <summary>
+        /// create response message for "donger"
+        /// </summary>
+        /// <returns></returns>
+        public static string getDongered()
+        {
+            using (StreamReader r = new StreamReader(dongersLoc))
+            {
+                string json = r.ReadToEnd();
+                string[] dongers = JsonConvert.DeserializeObject<string[]>(json);
+                Random rand = new Random();
+                return dongers[(int)rand.Next(0, 77)];
+            }
+        }
         /// <summary>
         /// Create response message for "told"
         /// </summary>
